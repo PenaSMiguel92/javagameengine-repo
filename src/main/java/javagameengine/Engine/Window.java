@@ -1,5 +1,8 @@
 package javagameengine.Engine;
 
+import javagameengine.Util.*;
+import javagameengine.Engine.*;
+
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -16,15 +19,36 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 
 public class Window {
-    private int width, height;
+    private Vector2 windowSize = new Vector2();
     private String title;
     private long glfwWindow;
 
+    private Color color = new Color();
+
+    private boolean fadeToBlack = false;
+
     private static Window window = null;
+    private static Scene currentScene;
+
     private Window() {
-        this.width = 1920;
-        this.height = 1080;
+        this.windowSize = new Vector2(1920, 1080);
         this.title = "mario";
+        this.color = new Color(1, 1, 1, 1);
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                //currentScene.init();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                //currentScene.init();
+                break;
+            default:
+                assert false : "Unknown scene '" + newScene + "'";
+        }
     }
 
     public static Window get() {
@@ -66,7 +90,7 @@ public class Window {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         //create the window
-        glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
+        glfwWindow = glfwCreateWindow((int) windowSize.getX(), (int) windowSize.getY(), this.title, NULL, NULL);
 
         if (glfwWindow == NULL)
             throw new IllegalStateException("Failed to create the GLFW window.");
@@ -91,20 +115,39 @@ public class Window {
 
         GL.createCapabilities();
 
+        Window.changeScene(0);
     }   
 
     public void loop() {
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+        float dt = -1.0f;
+
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor((float) this.color.getR(), (float) this.color.getG(), (float) this.color.getB(),
+                    (float) this.color.getA());
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE))
-                System.out.println("Space key is pressed");
+            if (dt >= 0) {
+                currentScene.update(dt);
+            }
+            
 
             glfwSwapBuffers(glfwWindow);
-            
+
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
         }
+    }
+    
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 }
