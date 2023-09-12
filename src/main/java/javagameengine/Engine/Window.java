@@ -131,6 +131,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
+                System.out.println("FPS: " + (1.0f / dt));
                 currentScene.update(dt);
             }
             

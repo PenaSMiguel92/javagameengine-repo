@@ -1,6 +1,5 @@
 package javagameengine.Engine;
 
-import javagameengine.Engine.*;
 import javagameengine.Util.Color;
 import java.awt.event.KeyEvent;
 
