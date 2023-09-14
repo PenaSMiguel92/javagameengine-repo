@@ -1,8 +1,11 @@
 package javagameengine.Engine;
 
 public abstract class Scene {
-    public Scene() {
 
+    protected Camera camera;
+
+    public Scene() {
+        
     }
 
     public void init() {
