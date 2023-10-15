@@ -1,6 +1,8 @@
 package javagameengine.Engine;
 
 import javagameengine.Renderer.*;
+import javagameengine.Util.Time;
+
 import org.lwjgl.*;
 import java.nio.*;
 import org.joml.*;
@@ -86,9 +88,13 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
+        camera.position.x -= dt * 50.0f;
+        camera.position.y -= dt * 20.0f;
+
         defaultShader.use();
         defaultShader.uploadMat4f("uProjection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("uView", camera.getViewMatrix());
+        defaultShader.uploadFloat("uTime", Time.getTime());
         //bind the vao that we're using
         glBindVertexArray(vaoID);
 
